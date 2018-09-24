@@ -36,8 +36,9 @@ module Searchkick
 
     def record_data
       data = {
-        _index: index.name,
-        _id: search_id
+        _index: "#{index.name}_#{record.user_id}",
+        _id: search_id,
+        _type: document_type
       }
       data[:_type] = document_type if Searchkick.server_below7?
       data[:routing] = record.search_routing if record.respond_to?(:search_routing)
