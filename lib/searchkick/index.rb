@@ -203,6 +203,15 @@ module Searchkick
       index
     end
 
+    def self.create_index_if_needed(klass, user_id)
+      index_name = "#{klass.to_s.downcase.pluralize}_#{Rails.env}_#{user_id}"
+      unless client.indices.exists(index: index_name)
+        options = klass.searchkick_index.index_options
+        index = Searchkick::Index.new(index_name, options)
+        index.create(options)
+      end
+    end
+
     def import_scope(relation, **options)
       bulk_indexer.import_scope(relation, **options)
     end
