@@ -21,7 +21,7 @@ module Searchkick
         :match, :misspellings, :model_includes, :offset, :operator, :order, :padding, :page, :per_page, :profile,
         :request_params, :routing, :scope_results, :select, :similar, :smart_aggs, :suggest, :total_entries, :track, :type, :where, :user_id]
       raise ArgumentError, "unknown keywords: #{unknown_keywords.join(", ")}" if unknown_keywords.any?
-      raise ArgumentError, "You must provide a user id for your search"
+      raise ArgumentError, "You must provide a user id for your search" if options[:user_id].nil?
 
       term = term.to_s
 
