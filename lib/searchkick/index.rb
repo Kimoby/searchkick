@@ -106,7 +106,7 @@ module Searchkick
           {}
         end
       indices = indices.select { |_k, v| v.empty? || v["aliases"].empty? } if unaliased
-      indices.select { |k, _v| k =~ /\A#{Regexp.escape(name)}_\d{14,17}\z/ }.keys
+      indices.select { |k, _v| k =~ /\A#{Regexp.escape(name)}_\d+$/ }.keys
     end
 
     # remove old indices that start w/ index_name
@@ -262,7 +262,7 @@ module Searchkick
         raise Searchkick::Error, "No index to resume" unless index_name
         index = Searchkick::Index.new(index_name, @options)
       else
-        clean_indices unless retain
+        # clean_indices unless retain
 
         index_options = relation.searchkick_index_options
         index_options.deep_merge!(settings: {index: {refresh_interval: refresh_interval}}) if refresh_interval
