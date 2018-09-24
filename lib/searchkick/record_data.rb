@@ -36,7 +36,7 @@ module Searchkick
 
     def record_data
       data = {
-        _index: 'test_dostibale',
+        _index: "#{record.class.to_s.downcase.pluralize}_#{Rails.env}_#{record.user_id}",
         _id: search_id,
         _type: document_type
       }
