@@ -111,7 +111,7 @@ module Searchkick
           {}
         end
       indices = indices.select { |_k, v| v.empty? || v["aliases"].empty? } if unaliased
-      indices.select { |k, _v| k =~ /\A#{Regexp.escape(name)}_\d+$/ }.keys
+      indices.select { |k, _v| k =~ /\A#{Regexp.escape(name)}_\d{14,17}\z/ }.keys
     end
 
     # remove old indices that start w/ index_name
@@ -210,9 +210,8 @@ module Searchkick
 
     def create_index(index_options: nil)
       index_options ||= self.index_options
-      index = Searchkick::Index.new(name, @options)
+      index = Searchkick::Index.new("#{name}_#{Time.now.strftime('%Y%m%d%H%M%S%L')}", @options)
       index.create(index_options)
-      puts '------INDEX CREATED'
       index
     end
 
@@ -283,21 +282,15 @@ module Searchkick
     # https://gist.github.com/jarosan/3124884
     # http://www.elasticsearch.org/blog/changing-mapping-with-zero-downtime/
     def reindex_scope(relation, import: true, resume: false, retain: false, async: false, refresh_interval: nil, scope: nil)
-
-      puts '-------REINDEXING SCOPE'
-
       if resume
         index_name = all_indices.sort.last
         raise Searchkick::Error, "No index to resume" unless index_name
         index = Searchkick::Index.new(index_name, @options)
       else
-        # clean_indices unless retain
+        clean_indices unless retain
 
         index_options = relation.searchkick_index_options
         index_options.deep_merge!(settings: {index: {refresh_interval: refresh_interval}}) if refresh_interval
-
-        puts '-------WILL CREATE INDEX'
-
         index = create_index(index_options: index_options)
       end
 
