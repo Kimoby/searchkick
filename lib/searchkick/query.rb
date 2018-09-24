@@ -19,8 +19,9 @@ module Searchkick
         :boost_by, :boost_by_distance, :boost_by_recency, :boost_where, :conversions, :conversions_term, :debug, :emoji, :exclude, :execute, :explain,
         :fields, :highlight, :includes, :index_name, :indices_boost, :limit, :load,
         :match, :misspellings, :model_includes, :offset, :operator, :order, :padding, :page, :per_page, :profile,
-        :request_params, :routing, :scope_results, :select, :similar, :smart_aggs, :suggest, :total_entries, :track, :type, :where]
+        :request_params, :routing, :scope_results, :select, :similar, :smart_aggs, :suggest, :total_entries, :track, :type, :where, :user_id]
       raise ArgumentError, "unknown keywords: #{unknown_keywords.join(", ")}" if unknown_keywords.any?
+      raise ArgumentError, "You must provide a user id for your search"
 
       term = term.to_s
 
@@ -56,17 +57,8 @@ module Searchkick
     end
 
     def params
-      index =
-        if options[:index_name]
-          Array(options[:index_name]).map { |v| v.respond_to?(:searchkick_index) ? v.searchkick_index.name : v }.join(",")
-        elsif searchkick_index
-          searchkick_index.name
-        else
-          "_all"
-        end
-
       params = {
-        index: index,
+        index: index_for_user(options[:user_id]),
         body: body
       }
       params[:type] = @type if @type
@@ -1004,6 +996,10 @@ module Searchkick
 
     def below61?
       Searchkick.server_below?("6.1.0")
+    end
+
+    def index_for_user(user_id)
+      "#{klass.to_s.downcase.pluralize}_#{Rails.env}_#{user_id}"
     end
   end
 end
