@@ -36,7 +36,7 @@ module Searchkick
 
     def record_data
       data = {
-        _index: index.name,
+        _index: 'test_dostibale',
         _id: search_id,
         _type: document_type
       }
