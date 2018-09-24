@@ -1,3 +1,7 @@
+# Kimoby related
+
+record_data.rb has been modified to include user_id scope in index name.
+
 # Searchkick
 
 :rocket: Intelligent search made easy
