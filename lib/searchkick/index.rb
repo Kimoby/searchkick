@@ -210,7 +210,7 @@ module Searchkick
 
     def create_index(index_options: nil)
       index_options ||= self.index_options
-      index = Searchkick::Index.new("#{name}_#{Time.now.strftime('%Y%m%d%H%M%S%L')}", @options)
+      index = Searchkick::Index.new(name, @options)
       index.create(index_options)
       index
     end
