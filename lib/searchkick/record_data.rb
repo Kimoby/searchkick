@@ -35,6 +35,8 @@ module Searchkick
     end
 
     def record_data
+      Searchkick.create_index_if_needed(record.class, record.user_id)
+
       data = {
         _index: "#{record.class.to_s.downcase.pluralize}_#{Rails.env}_#{record.user_id}",
         _id: search_id,
