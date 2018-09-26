@@ -30,8 +30,9 @@ module Searchkick
       client.indices.exists index: name
     end
 
-    def refresh
-      client.indices.refresh index: name
+    def refresh(user_id = nil)
+      index_name = user_id.nil? ? name : "#{name}_#{user_id}"
+      client.indices.refresh index: index_name
     end
 
     def alias_exists?

@@ -50,7 +50,7 @@ module Searchkick
       else # bulk, inline/true/nil
         reindex_record(method_name)
 
-        index.refresh if refresh
+        index.refresh if refresh(record.user_id)
       end
     end
 
