@@ -9,16 +9,12 @@ module Searchkick
     end
 
     def push(record_id)
-      Searchkick.with_redis { |r| r.lpush(redis_key, record_id) }
+      Searchkick.with_redis { |r| r.sadd(redis_key, record_id) }
     end
 
     # TODO use reliable queuing
     def reserve(limit: 1000)
-      record_ids = Set.new
-      while record_ids.size < limit && (record_id = Searchkick.with_redis { |r| r.rpop(redis_key) })
-        record_ids << record_id
-      end
-      record_ids.to_a
+      Searchkick.with_redis { |r| r.spop(redis_key, limit) }
     end
 
     def clear
@@ -26,7 +22,7 @@ module Searchkick
     end
 
     def length
-      Searchkick.with_redis { |r| r.llen(redis_key) }
+      Searchkick.with_redis { |r| r.scard(redis_key) }
     end
 
     private
