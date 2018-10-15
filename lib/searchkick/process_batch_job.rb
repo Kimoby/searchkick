@@ -25,11 +25,6 @@ module Searchkick
         m
       end
 
-      user_ids = records.map(&:user_id).uniq
-      user_ids.each do |user_id|
-        Searchkick::Index.create_index_if_needed(klass, user_id)
-      end
-
       # bulk reindex
       index = klass.searchkick_index(name: index_name)
       Searchkick.callbacks(:bulk) do
