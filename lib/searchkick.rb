@@ -206,7 +206,7 @@ module Searchkick
     records =
       if records.respond_to?(:primary_key)
         # ActiveRecord
-        records.with_deleted.where(records.primary_key => ids) if records.primary_key
+        records.where(records.primary_key => ids) if records.primary_key
       elsif records.respond_to?(:queryable)
         # Mongoid 3+
         records.queryable.for_ids(ids)
