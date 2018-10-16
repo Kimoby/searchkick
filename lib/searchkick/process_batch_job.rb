@@ -14,15 +14,14 @@ module Searchkick
 
       # determine which records to delete
       delete_ids = record_ids - records.map { |r| r.id.to_s }
-      delete_records = delete_ids.map do |id|
-        m = klass.new
-        m.id = id
-        if routing[id]
-          m.define_singleton_method(:search_routing) do
-            routing[id]
+      delete_records = klass.with_deleted.where(id: delete_ids)
+
+      delete_records.each do |record|
+        if routing[record.id]
+          record.define_singleton_method(:search_routing) do
+            routing[record.id]
           end
         end
-        m
       end
 
       # bulk reindex
